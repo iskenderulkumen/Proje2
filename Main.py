@@ -8,49 +8,53 @@ def dosya_okuma(dosya_adi):
 
 def dosya_kayit(dosya_adi,sureB,sureS,adimsayB,adimsayS,sonucB,sonucS):
     with open(dosya_adi + ".txt", "a",encoding="utf-8") as f:
-        f.write(f"BubbleSort suresi:{sureB}\tSelectionSort süresi:{sureS}\nBubbleSort Adım Sayısı:{adimsayB}\tSelectionSort Adım Sayısı:{adimsayS}\nBubbleSort Sonuç:{sonucB}\tSelectionSort Sonuç:{sonucS}\n\n")
+        f.write(f"BubbleSort suresi:{sureB}\tSelectionSort süresi:{sureS}\nBubbleSort Adım Sayısı:{adimsayB}\tSelectionSort Adım Sayısı:{adimsayS}\nBubbleSort Sonuç:{sonucB}\tSelectionSort Sonuç:{sonucS}\n" + "-" * 50 + "\n")
 def bubbleSort(listeB):
     baslangic_zamani = time.perf_counter()
     a = len(listeB)
-    global b 
     b = 0
     for i in range(a):
+        degistiMi = False
         for j in range(0, a-i-1):
             if listeB[j] > listeB[j+1]:
                 listeB[j], listeB[j+1] = listeB[j+1], listeB[j]
-                b += 1
+                degistiMi = True
+            b += 1
+        if degistiMi == False:
+            break
     bitis_zamani = time.perf_counter()
-    global gecen_zamanB
     gecen_zamanB = str(f"{bitis_zamani - baslangic_zamani:10f}")
-    return listeB
+    return listeB,b,gecen_zamanB
 
 def selectionSort(listeS):
     baslangic_zamani = time.perf_counter()
     a = len(listeS)
-    global c 
     c = 0
     for i in range(a):
         min_idx = i
         for j in range(i+1, a):
+            c += 1
             if listeS[j] < listeS[min_idx]:
                 min_idx = j
         listeS[i], listeS[min_idx] = listeS[min_idx], listeS[i]
-        c += 1
     bitis_zamani = time.perf_counter()
     global gecen_zamanS
     gecen_zamanS = str(f"{bitis_zamani - baslangic_zamani:10f}")
-    return listeS
+    return listeS, c,gecen_zamanS
 
 soru = input("Dosya adını giriniz (uzantısız): ")
 kayit_soru = input("Kayit Dosyasi Adi ne olsun (uzantısız): ")
 
-dosya = dosya_okuma(soru).split(",")
-dosya = [int(x) for x in dosya]
+dosya = dosya_okuma(soru)
+dosya = [int(x) for x in dosya.split(",")]
+
+b_icinListe = dosya.copy()
+s_icinListe = dosya.copy()
 
 
-bubbleSort(dosya)
-selectionSort(dosya)
-dosya_kayit(kayit_soru,gecen_zamanB,gecen_zamanS,b,c,bubbleSort(dosya),selectionSort(dosya))
+b_icinListe, b,gecen_zamanB = bubbleSort(b_icinListe)
+s_icinListe, c,gecen_zamanS = selectionSort(s_icinListe)
+dosya_kayit(kayit_soru,gecen_zamanB,gecen_zamanS,b,c,b_icinListe,s_icinListe)
 dosya_okuma(soru)
 
-print("işlem gerçekleştiriliyor..")
+print(f"İşlemler tamamlandı. Sonuçlar '{kayit_soru}.txt' dosyasına yazıldı.")
